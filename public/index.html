@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <script src="./china.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 800px;height: 600px;"></div>
+
+    <script>
+        var myCharts = echarts.init(document.getElementById('main'));
+        fetch('/data.json').then(res => res.json()).then(
+            res => {
+                console.log(res);
+            })
+        var option = {
+            title: {
+                text: '全国疫情图',
+                subtext: '全国疫情图表',
+                left: 'center'
+            },
+            backgroundColor: '#f7f7f7',
+            series: {
+                type: 'map',
+                map: 'china',
+                label: {
+                    show: true
+                }
+            }
+
+        }
+        myCharts.setOption(option);
+    </script>
+</body>
+
+</html>
