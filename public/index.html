@@ -15,7 +15,7 @@
 
     <script>
         var myCharts = echarts.init(document.getElementById('main'));
-        fetch('/data.json').then(res => res.json()).then(
+        fetch('/api/data').then(res => res.json()).then(
             res => {
                 console.log(res);
             })
