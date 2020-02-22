@@ -10,32 +10,75 @@
     <script src="./china.js"></script>
 </head>
 
-<body>
-    <div id="main" style="width: 800px;height: 600px;"></div>
+<body style="background-color: #f7f7f7;">
+    <div id="main" style="position:absolute;left:0;top:0;width:100%;height:100%"></div>
 
     <script>
         var myCharts = echarts.init(document.getElementById('main'));
         fetch('/api/data').then(res => res.json()).then(
             res => {
-                console.log(res);
-            })
-        var option = {
-            title: {
-                text: '全国疫情图',
-                subtext: '全国疫情图表',
-                left: 'center'
-            },
-            backgroundColor: '#f7f7f7',
-            series: {
-                type: 'map',
-                map: 'china',
-                label: {
-                    show: true
-                }
-            }
+                //console.log(res);
+                var getListByCountryTypeService1 = res.getListByCountryTypeService1;
+                var filterData = [];
+                getListByCountryTypeService1.forEach(item => {
+                        filterData.push({
+                            name: item.provinceShortName,
+                            value: item.confirmedCount,
+                            curedCount: item.curedCount,
+                            deadCount: item.deadCount
+                        })
+                    })
+                    //console.log(filterData);
+                myCharts.setOption({
+                    title: {
+                        text: '全国疫情图',
+                        subtext: '丁香园疫情图',
+                        sublink: 'https://ncov.dxy.cn/ncovh5/view/pneumonia?from=singlemessage&isappinstalled=0',
+                        left: 'center'
+                    },
+                    visualMap: {
+                        type: 'piecewise',
+                        pieces: [{
+                            gt: 10000
+                        }, {
+                            gt: 1000,
+                            lte: 9999
+                        }, {
+                            gt: 500,
+                            lte: 999
+                        }, {
+                            gt: 100,
+                            lte: 499
+                        }, {
+                            gt: 10,
+                            lte: 99
+                        }, {
+                            gt: 0,
+                            lte: 9
+                        }],
+                        inRange: {
+                            color: ['#FDEBCF', '#F59E83', '#E55A4E', '#CB2A2F', '#811C24', '#4F070D']
+                        }
+                    },
+                    tooltip: {
+                        formatter: function(params) {
+                            console.log(params);
+                            return '地区: ' + params.name + '</br>确诊:' + (params.value || 0) + '人</br>治愈: ' + ((params.data && params.data.curedCount) || 0) + '人</br>死亡: ' + ((params.data && params.data.deadCount) || 0) + '人'
 
-        }
-        myCharts.setOption(option);
+                        }
+                    },
+
+                    series: {
+                        type: 'map',
+                        map: 'china',
+                        label: {
+                            show: true
+                        },
+                        data: filterData
+                    }
+
+                });
+            })
     </script>
 </body>
 
